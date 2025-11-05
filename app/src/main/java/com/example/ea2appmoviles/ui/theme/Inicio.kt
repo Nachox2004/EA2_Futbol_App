@@ -1,5 +1,7 @@
 package com.example.ea2appmoviles.ui.theme
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -9,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -18,6 +21,7 @@ import com.example.ea2appmoviles.R
 
 @Composable
 fun Inicio(navController: NavController) {
+    val context = LocalContext.current
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.futbol_chileno),
@@ -66,6 +70,20 @@ fun Inicio(navController: NavController) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Noticias", fontSize = 16.sp)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    val gmmIntentUri = Uri.parse("geo:0,0?q=estadios de futbol en chile")
+                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                    mapIntent.setPackage("com.google.android.apps.maps")
+                    context.startActivity(mapIntent)
+                 },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Maps", fontSize = 16.sp)
             }
         }
     }
