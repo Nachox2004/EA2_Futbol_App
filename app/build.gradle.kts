@@ -1,3 +1,4 @@
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -74,4 +75,11 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+// Gson Converter (para convertir JSON a objetos Kotlin/Java)
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }
+
