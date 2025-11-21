@@ -1,18 +1,17 @@
+
 package com.example.ea2appmoviles.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ea2appmoviles.model.Equipo
 import com.example.ea2appmoviles.repository.EquipoRepository
-import com.example.ea2appmoviles.repository.JugadorRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class EquipoViewModel(
-    private val equipoRepository: EquipoRepository,
-    private val jugadorRepository: JugadorRepository
-) : ViewModel() {
+class EquipoViewModel() : ViewModel() {
+
+    private val equipoRepository: EquipoRepository = EquipoRepository()
 
     private val _equipos = MutableStateFlow<List<Equipo>>(emptyList())
     val equipos: StateFlow<List<Equipo>> = _equipos
@@ -32,3 +31,4 @@ class EquipoViewModel(
         }
     }
 }
+
