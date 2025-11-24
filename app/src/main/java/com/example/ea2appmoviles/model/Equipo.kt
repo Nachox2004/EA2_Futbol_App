@@ -1,14 +1,25 @@
 
 package com.example.ea2appmoviles.model
 
-// He eliminado las anotaciones de Room y he cambiado el tipo de `escudo` a String.
-// Esto es para que coincida con la estructura de datos que probablemente obtendrás de tu API de Xano,
-// donde el escudo será una URL a una imagen.
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
+
+@Entity(tableName = "equipos")
 data class Equipo(
-    val id: Int = 0,
+    @PrimaryKey(autoGenerate = false)
+    val id: Int,
+
     val nombre: String,
-    val escudo: String,
+
+    @SerializedName("imagen.png")
+    val escudo: String?,
+
     val estadio: String,
-    val fundacion: String,
+
+    @SerializedName("ano_fundacion")
+    val fundacion: Int,
+
+    @SerializedName("division")
     val liga: String
 )

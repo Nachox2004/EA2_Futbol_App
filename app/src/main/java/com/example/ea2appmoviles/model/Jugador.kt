@@ -2,6 +2,7 @@ package com.example.ea2appmoviles.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -11,7 +12,8 @@ import androidx.room.PrimaryKey
         parentColumns = ["id"],
         childColumns = ["equipoId"],
         onDelete = ForeignKey.CASCADE
-    )]
+    )],
+    indices = [Index(value = ["equipoId"])]
 )
 data class Jugador(
     @PrimaryKey(autoGenerate = true)

@@ -6,30 +6,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.ea2appmoviles.viewmodel.EquipoViewModel
+import com.example.ea2appmoviles.model.Equipo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EquipoDetailScreen(
     navController: NavController,
-    nombreEquipo: String, // Se espera el nombre del equipo para buscarlo
-    equipoViewModel: EquipoViewModel = viewModel()
+    equipo: Equipo? // Recibe el objeto Equipo, que puede ser nulo mientras carga
 ) {
-    // Busca el equipo por su nombre
-    equipoViewModel.buscarEquipoPorNombre(nombreEquipo)
-
-    val equipo by equipoViewModel.equipoSeleccionado.collectAsState()
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -51,7 +42,7 @@ fun EquipoDetailScreen(
                 .padding(innerPadding),
             contentAlignment = Alignment.Center
         ) {
-            equipo?.let {
+            equipo?.let { // Si el equipo no es nulo, muestra los detalles
                 Card(
                     modifier = Modifier
                         .padding(16.dp)
@@ -78,7 +69,7 @@ fun EquipoDetailScreen(
                     }
                 }
             } ?: run {
-                // Muestra un indicador de carga mientras se obtienen los datos
+                // Si el equipo es nulo (cargando), muestra un indicador de progreso
                 CircularProgressIndicator()
             }
         }

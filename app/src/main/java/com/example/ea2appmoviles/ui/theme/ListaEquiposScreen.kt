@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,8 +30,10 @@ fun ListaEquiposScreen(
 ) {
     val equipos by equipoViewModel.equipos.collectAsState()
 
-    // Carga los equipos de la liga especificada
-    equipoViewModel.getEquipos(liga)
+    // Carga los equipos solo cuando la 'liga' cambia
+    LaunchedEffect(liga) {
+        equipoViewModel.getEquipos(liga)
+    }
 
     Column {
         LazyColumn {
@@ -38,7 +41,7 @@ fun ListaEquiposScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navController.navigate("equipoDetail/${equipo.nombre}") }
+                        .clickable { navController.navigate("detalle_equipo/${equipo.nombre}") } // Ruta corregida
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {

@@ -25,7 +25,7 @@ import com.example.ea2appmoviles.viewmodel.EquipoViewModelFactory
 class MainActivity : ComponentActivity() {
 
     private val database by lazy { AppDatabase.getInstance(this) }
-    private val equipoRepository by lazy { EquipoRepository(database.equipoDao()) }
+    private val equipoRepository by lazy { EquipoRepository() }
     private val jugadorRepository by lazy { JugadorRepository(database.jugadorDao()) }
     private val viewModelFactory by lazy { EquipoViewModelFactory(equipoRepository, jugadorRepository) }
 
