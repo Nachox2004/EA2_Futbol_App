@@ -65,6 +65,16 @@ fun Inicio(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Nuevo botón para depurar la conexión a Xano
+            Button(
+                onClick = { navController.navigate("tabla_posiciones/XANO_TODOS") },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Base de datos Xano", fontSize = 16.sp)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Button(
                 onClick = { navController.navigate("noticias") },
                 modifier = Modifier.fillMaxWidth()

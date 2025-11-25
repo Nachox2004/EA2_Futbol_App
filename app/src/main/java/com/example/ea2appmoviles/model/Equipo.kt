@@ -2,24 +2,36 @@
 package com.example.ea2appmoviles.model
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+// Clase auxiliar para mapear el objeto de imagen que devuelve Xano
+data class EscudoImage(
+    val url: String? = null
+)
+
 @Entity(tableName = "equipos")
 data class Equipo(
+    // Las propiedades se cambian a 'var' y se les da un valor por defecto
+    // para resolver el conflicto entre Room y GSON.
     @PrimaryKey(autoGenerate = false)
-    val id: Int,
+    var id: Int = 0,
 
-    val nombre: String,
+    var nombre: String = "",
 
-    @SerializedName("imagen.png")
-    val escudo: String?,
-
-    val estadio: String,
+    var estadio: String = "",
 
     @SerializedName("ano_fundacion")
-    val fundacion: Int,
+    var fundacion: Int = 0,
 
     @SerializedName("division")
-    val liga: String
-)
+    var liga: String = "",
+
+    @SerializedName("escudo")
+    @Ignore
+    var escudoObject: EscudoImage? = null
+) {
+    val escudo: String?
+        get() = escudoObject?.url
+}
