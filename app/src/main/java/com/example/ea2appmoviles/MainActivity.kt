@@ -18,9 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ea2appmoviles.model.Clasificacion
+import com.example.ea2appmoviles.model.ClasificacionUi
 import com.example.ea2appmoviles.model.Equipo
-import com.example.ea2appmoviles.model.Fecha
+import com.example.ea2appmoviles.model.FechaUi
 import com.example.ea2appmoviles.ui.theme.EA2AppMovilesTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             EA2AppMovilesTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize().background(Color(0xFFF5F5F5)) // Fondo gris claro
+                    modifier = Modifier.fillMaxSize().background(Color(0xFFF5F5F5))
                 ) {
                     HomeScreen(viewModel)
                 }
@@ -43,15 +43,15 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun HomeScreen(viewModel: MainViewModel) {
     val equipos by viewModel.equipos.collectAsState()
-    val clasificacion by viewModel.clasificacion.collectAsState()
-    val fechas by viewModel.fechas.collectAsState()
+    val clasificacionUi by viewModel.clasificacionUi.collectAsState()
+    val fechasUi by viewModel.fechasUi.collectAsState()
 
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
             text = "Futbolito",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Black, // Texto negro
+            color = Color.Black,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
@@ -77,13 +77,13 @@ fun HomeScreen(viewModel: MainViewModel) {
                 item { SectionTitle("Equipos") }
                 items(equipos) { equipo -> EquipoItem(equipo) }
             }
-            if (clasificacion.isNotEmpty()) {
+            if (clasificacionUi.isNotEmpty()) {
                 item { SectionTitle("Clasificación") }
-                items(clasificacion) { clasif -> ClasificacionItem(clasif) }
+                items(clasificacionUi) { clasif -> ClasificacionItem(clasif) }
             }
-            if (fechas.isNotEmpty()) {
+            if (fechasUi.isNotEmpty()) {
                 item { SectionTitle("Fechas") }
-                items(fechas) { fecha -> FechaItem(fecha) }
+                items(fechasUi) { fecha -> FechaItem(fecha) }
             }
         }
     }
@@ -99,7 +99,7 @@ fun ItemCard(content: @Composable () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White), // Tarjetas blancas
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Box(modifier = Modifier.padding(12.dp)) {
@@ -120,23 +120,23 @@ fun EquipoItem(equipo: Equipo) {
 }
 
 @Composable
-fun ClasificacionItem(clasif: Clasificacion) {
+fun ClasificacionItem(clasif: ClasificacionUi) {
     ItemCard {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Equipo ID: ${clasif.equipo ?: "N/A"}", color = Color.DarkGray)
-            Text("Jornadas: ${clasif.jornadasDisputadas ?: 0}", color = Color.DarkGray)
-            Text("Puntos: ${clasif.points ?: 0}", fontWeight = FontWeight.Bold, color = Color.Black)
+            Text(clasif.teamName, fontWeight = FontWeight.Bold, color = Color.Black, modifier = Modifier.weight(1f))
+            Text("J: ${clasif.jornadasDisputadas}", color = Color.DarkGray, modifier = Modifier.padding(horizontal = 8.dp))
+            Text("Pts: ${clasif.points}", fontWeight = FontWeight.Bold, color = Color.Black)
         }
     }
 }
 
 @Composable
-fun FechaItem(fecha: Fecha) {
+fun FechaItem(fecha: FechaUi) {
     ItemCard {
         Column {
-            Text("Jornada: ${fecha.jornada ?: "N/A"}", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 16.sp)
-            Text("Local: ${fecha.equipoLocal ?: "N/A"} vs Visitante: ${fecha.equipoVisitante ?: "N/A"}", color = Color.DarkGray)
-            Text("Fecha: ${fecha.diaAJugar ?: "--"} - Hora: ${fecha.horaDePartido ?: "--"}", color = Color.DarkGray)
+            Text("Jornada: ${fecha.jornada}", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 16.sp)
+            Text("${fecha.equipoLocal} vs ${fecha.equipoVisitante}", color = Color.DarkGray)
+            Text("Fecha: ${fecha.diaAJugar} - Hora: ${fecha.horaDePartido}", color = Color.DarkGray)
         }
     }
 }
