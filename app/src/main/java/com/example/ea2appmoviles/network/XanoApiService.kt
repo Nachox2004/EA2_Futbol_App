@@ -1,12 +1,17 @@
-
 package com.example.ea2appmoviles.network
 
+import com.example.ea2appmoviles.model.Clasificacion
 import com.example.ea2appmoviles.model.Equipo
+import com.example.ea2appmoviles.model.Fecha
 import retrofit2.http.GET
 
 interface XanoApiService {
-    // Volvemos a "equipos" (plural), que es como Xano suele crear los endpoints por defecto,
-    // aunque la tabla se llame "equipo".
-    @GET("equipos")
+    @GET("equipo")
     suspend fun getEquipos(): List<Equipo>
+
+    @GET("clasificacion")
+    suspend fun getClasificacion(): List<Clasificacion>
+
+    @GET("fecha")
+    suspend fun getFechas(): List<Fecha>
 }

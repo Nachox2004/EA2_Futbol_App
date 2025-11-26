@@ -1,11 +1,16 @@
 package com.example.ea2appmoviles.repository
 
-import com.example.ea2appmoviles.dao.TablaPosicionesDao
-import com.example.ea2appmoviles.model.TablaPosiciones
+import com.example.ea2appmoviles.model.Clasificacion
+import com.example.ea2appmoviles.network.RetrofitInstance
 
-class TablaPosicionesRepository(private val dao: TablaPosicionesDao) {
-    suspend fun getAll() = dao.getAll()
-    suspend fun insertAll(tabla: List<TablaPosiciones>) = dao.insertAll(tabla)
-    suspend fun update(fila: TablaPosiciones) = dao.update(fila)
-    suspend fun delete(fila: TablaPosiciones) = dao.delete(fila)
+class TablaPosicionesRepository() {
+    private val apiService = RetrofitInstance.api
+
+    suspend fun getAll(): List<Clasificacion> {
+        return try {
+            apiService.getClasificacion()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
 }

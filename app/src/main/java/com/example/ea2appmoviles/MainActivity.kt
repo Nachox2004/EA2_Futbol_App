@@ -3,42 +3,37 @@ package com.example.ea2appmoviles
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.ea2appmoviles.database.AppDatabase
-import com.example.ea2appmoviles.repository.EquipoRepository
-import com.example.ea2appmoviles.repository.JugadorRepository
-import com.example.ea2appmoviles.ui.theme.*
-import com.example.ea2appmoviles.viewmodel.EquipoViewModel
-import com.example.ea2appmoviles.viewmodel.EquipoViewModelFactory
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.ea2appmoviles.model.Clasificacion
+import com.example.ea2appmoviles.model.Equipo
+import com.example.ea2appmoviles.model.Fecha
+import com.example.ea2appmoviles.ui.theme.EA2AppMovilesTheme
 
 class MainActivity : ComponentActivity() {
-
-    private val database by lazy { AppDatabase.getInstance(this) }
-    private val equipoRepository by lazy { EquipoRepository() }
-    private val jugadorRepository by lazy { JugadorRepository(database.jugadorDao()) }
-    private val viewModelFactory by lazy { EquipoViewModelFactory(equipoRepository, jugadorRepository) }
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             EA2AppMovilesTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize().background(Color(0xFFF5F5F5)) // Fondo gris claro
                 ) {
-                    val viewModel: EquipoViewModel = viewModel(factory = viewModelFactory)
-                    AppNavigation(viewModel = viewModel)
+                    HomeScreen(viewModel)
                 }
             }
         }
@@ -46,37 +41,102 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppNavigation(viewModel: EquipoViewModel) {
-    val navController = rememberNavController()
+fun HomeScreen(viewModel: MainViewModel) {
+    val equipos by viewModel.equipos.collectAsState()
+    val clasificacion by viewModel.clasificacion.collectAsState()
+    val fechas by viewModel.fechas.collectAsState()
 
-    NavHost(navController = navController, startDestination = "inicio") {
-        composable("inicio") {
-            Inicio(navController = navController)
-        }
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = "Futbolito",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black, // Texto negro
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-        composable("noticias") {
-            NoticiasScreen(navController = navController)
-        }
-
-        composable("tabla_posiciones/{liga}") { backStackEntry ->
-            val liga = backStackEntry.arguments?.getString("liga") ?: ""
-            TablaPosicionesScreen(navController = navController, liga = liga)
-        }
-
-        composable("fecha/{liga}") { backStackEntry ->
-            val liga = backStackEntry.arguments?.getString("liga") ?: ""
-            FechaScreen(navController = navController, liga = liga)
-        }
-
-        composable("detalle_equipo/{equipoNombre}") { backStackEntry ->
-            val equipoNombre = backStackEntry.arguments?.getString("equipoNombre") ?: ""
-            LaunchedEffect(equipoNombre) {
-                viewModel.buscarEquipoPorNombre(equipoNombre)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(onClick = { viewModel.getEquipos() }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B5E20))) {
+                Text("Equipos", color = Color.White)
             }
-            val equipo by viewModel.equipoSeleccionado.collectAsState()
-            equipo?.let {
-                EquipoDetailScreen(navController = navController, equipo = it)
+            Button(onClick = { viewModel.getClasificacion() }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B5E20))) {
+                Text("Clasificación", color = Color.White)
             }
+            Button(onClick = { viewModel.getFechas() }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1B5E20))) {
+                Text("Fechas", color = Color.White)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (equipos.isNotEmpty()) {
+                item { SectionTitle("Equipos") }
+                items(equipos) { equipo -> EquipoItem(equipo) }
+            }
+            if (clasificacion.isNotEmpty()) {
+                item { SectionTitle("Clasificación") }
+                items(clasificacion) { clasif -> ClasificacionItem(clasif) }
+            }
+            if (fechas.isNotEmpty()) {
+                item { SectionTitle("Fechas") }
+                items(fechas) { fecha -> FechaItem(fecha) }
+            }
+        }
+    }
+}
+
+@Composable
+fun SectionTitle(title: String) {
+    Text(title, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.Black, modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+}
+
+@Composable
+fun ItemCard(content: @Composable () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White), // Tarjetas blancas
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Box(modifier = Modifier.padding(12.dp)) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun EquipoItem(equipo: Equipo) {
+    ItemCard {
+        Column {
+            Text(equipo.nombre, fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 16.sp)
+            Text("Estadio: ${equipo.estadio ?: "No disponible"}", color = Color.DarkGray)
+            Text("Fundación: ${equipo.fundacion ?: "No disponible"}", color = Color.DarkGray)
+        }
+    }
+}
+
+@Composable
+fun ClasificacionItem(clasif: Clasificacion) {
+    ItemCard {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text("Equipo ID: ${clasif.equipo ?: "N/A"}", color = Color.DarkGray)
+            Text("Jornadas: ${clasif.jornadasDisputadas ?: 0}", color = Color.DarkGray)
+            Text("Puntos: ${clasif.points ?: 0}", fontWeight = FontWeight.Bold, color = Color.Black)
+        }
+    }
+}
+
+@Composable
+fun FechaItem(fecha: Fecha) {
+    ItemCard {
+        Column {
+            Text("Jornada: ${fecha.jornada ?: "N/A"}", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 16.sp)
+            Text("Local: ${fecha.equipoLocal ?: "N/A"} vs Visitante: ${fecha.equipoVisitante ?: "N/A"}", color = Color.DarkGray)
+            Text("Fecha: ${fecha.diaAJugar ?: "--"} - Hora: ${fecha.horaDePartido ?: "--"}", color = Color.DarkGray)
         }
     }
 }

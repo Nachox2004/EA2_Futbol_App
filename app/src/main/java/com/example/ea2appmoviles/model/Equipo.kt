@@ -6,7 +6,6 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-// Clase auxiliar para mapear el objeto de imagen que devuelve Xano
 data class EscudoImage(
     val url: String? = null
 )
